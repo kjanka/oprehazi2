@@ -35,5 +35,8 @@ public class Main {
         lruSwitch lru = new lruSwitch(pages);
         lru.run();
 
+        lruPSwitch lrup = new lruPSwitch(pages);
+        lrup.run();
+
     }
 }
