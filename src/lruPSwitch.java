@@ -52,7 +52,9 @@ public class lruPSwitch {
                 if(!canAssign){
                     boolean ok = false;
                     int nextInd = 0;
-                    if((!frames.get(0).locked) || frames.get(0).lastUsedAt+5 < i) ok = true;
+                    if((!frames.get(0).locked) || frames.get(0).lastUsedAt+5 < i) {
+                        ok = true;
+                    }
                     for(int j = 0; j < frames.size(); j++){
                         if(frames.get(j).lastUsedAt < frames.get(nextInd).lastUsedAt && (frames.get(j).lastUsedAt+5 < i || !frames.get(j).locked)){
                             ok = true;
@@ -68,7 +70,7 @@ public class lruPSwitch {
                         errors++;
                     }else{
                         for(int j = 0; j < frames.size(); j++){
-                            if((!frames.get(j).locked) && (frames.get(nextInd).lastUsedAt > frames.get(j).lastUsedAt) ){
+                            if((!frames.get(j).locked) && (frames.get(nextInd).lastUsedAt > frames.get(j).lastUsedAt || frames.get(nextInd).locked) ){
                                 ok = true;
                                 nextInd = j;
                             }
