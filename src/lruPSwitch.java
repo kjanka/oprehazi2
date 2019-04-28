@@ -18,6 +18,7 @@ public class lruPSwitch {
         this.errors = 0;
     }
 
+
     public void run(){
     StringBuilder out = new StringBuilder();
     int lastFrame = 1;
@@ -43,6 +44,7 @@ public class lruPSwitch {
                     if(frames.get(j).getCurrentPage() == calls.get(i)){
                         out.append('-');
                         frames.get(j).locked = false;
+                        frames.get(j).lastUsedAt = i;
                         canAssign = true;
                         break;
                     }
@@ -50,9 +52,9 @@ public class lruPSwitch {
                 if(!canAssign){
                     boolean ok = false;
                     int nextInd = 0;
-                    if(!frames.get(0).locked || frames.get(0).lastUsedAt+4 < i) ok = true;
+                    if((!frames.get(0).locked) || frames.get(0).lastUsedAt+5 < i) ok = true;
                     for(int j = 0; j < frames.size(); j++){
-                        if(frames.get(j).lastUsedAt < frames.get(nextInd).lastUsedAt && (frames.get(j).lastUsedAt+4 < i || !frames.get(j).locked)){
+                        if(frames.get(j).lastUsedAt < frames.get(nextInd).lastUsedAt && (frames.get(j).lastUsedAt+5 < i || !frames.get(j).locked)){
                             ok = true;
                             nextInd = j;
                             break;
@@ -61,11 +63,26 @@ public class lruPSwitch {
                     if(ok){
                         frames.get(nextInd).setCurrentPage(calls.get(i));
                         frames.get(nextInd).lastUsedAt = i;
+                        frames.get(nextInd).locked = true;
                         out.append(frames.get(nextInd).getId());
                         errors++;
                     }else{
-                        out.append('*');
-                        errors++;
+                        for(int j = 0; j < frames.size(); j++){
+                            if((!frames.get(j).locked) && (frames.get(nextInd).lastUsedAt > frames.get(j).lastUsedAt) ){
+                                ok = true;
+                                nextInd = j;
+                            }
+                        }
+                        if(!ok){
+                            out.append('*');
+                            errors++;
+                        }else{
+                            frames.get(nextInd).setCurrentPage(calls.get(i));
+                            frames.get(nextInd).lastUsedAt = i;
+                            out.append(frames.get(nextInd).getId());
+                            errors++;
+                        }
+
                     }
                 }
             }
